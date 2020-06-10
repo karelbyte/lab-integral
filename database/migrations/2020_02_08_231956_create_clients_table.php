@@ -17,9 +17,9 @@ class CreateClientsTable extends Migration
             $table->bigIncrements('id');
             $table->string('names');
             $table->date('birthday');
-            $table->string('address');
-            $table->string('email');
-            $table->string('telf');
+            $table->string('address')->nullable();
+            $table->string('email')->nullable();
+            $table->string('telf')->nullable();
             $table->timestamps();
             $table->engine = 'InnoDB';
             $table->charset = 'utf8';

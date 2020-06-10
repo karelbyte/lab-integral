@@ -83,7 +83,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-actions align="right">
-          <q-btn v-if="item.names !== ''" dense label="Guardar" color="positive" v-close-popup  @click="saveItem"/>
+          <q-btn v-if="validateSave" dense label="Guardar" color="positive" v-close-popup  @click="saveItem"/>
           <q-btn dense flat label="Cerrar" v-close-popup />
         </q-card-actions>
       </q-card>
@@ -203,6 +203,11 @@ export default {
       this.getList({
         pagination: this.pagination
       })
+    }
+  },
+  computed: {
+    validateSave () {
+      return this.item.names !== '' && this.item.birthday
     }
   },
   mounted () {

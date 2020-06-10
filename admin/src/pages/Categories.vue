@@ -57,7 +57,7 @@
       :item="item"
       title="Eliminar Categoria"
       url="/categories/eraser"
-      target="description"
+      targets="description"
       @updateList="updateOfEraser"
     />
     <!-- FORMA DE AÑADIR / EDITAR -->

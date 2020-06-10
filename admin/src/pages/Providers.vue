@@ -76,7 +76,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-actions align="right">
-          <q-btn v-if="item.names !== ''" dense label="Guardar" color="positive" v-close-popup  @click="saveItem"/>
+          <q-btn v-if="validateSave" dense label="Guardar" color="positive" @click="saveItem"/>
           <q-btn dense flat label="Cerrar" v-close-popup />
         </q-card-actions>
       </q-card>
@@ -202,6 +202,11 @@ export default {
       }
     )
   },
+  computed: {
+    validateSave () {
+      return this.item.names !== '' && this.item.address !== '' && this.item.email !== ''
+    }
+  },
   methods: {
     getList (props) {
       let toServer = {
@@ -240,6 +245,9 @@ export default {
         this.getList({
           pagination: this.pagination
         })
+        this.showForm = false
+      }).catch(er => {
+        this.$noty.positive(er.response.data)
       })
     },
     eraserShow (itm) {

@@ -18,7 +18,7 @@ class CreateProvidersTable extends Migration
             $table->string('names');
             $table->string('address');
             $table->string('email');
-            $table->string('tel');
+            $table->string('tel')->nullable();
             $table->timestamps();
             $table->engine = 'InnoDB';
             $table->charset = 'utf8';
