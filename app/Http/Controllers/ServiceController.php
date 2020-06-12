@@ -31,18 +31,23 @@ class ServiceController extends Controller
         $service = Service::query()->find($cont->service_id);
         $doctor = $service->doctor;
         $moment = $service->moment;
-        $code = $cont->barcode;
+        $code = $service->barcode;
         $client = Client::query()->find($service->client_id);
         $name = $client->names;
         $age = $this->getAge($client->birthday);
-
-        $header = "<span>MEDICO: <b>$doctor</b></span><br>"
+        $content = '';
+        if ($cont->head !== 1) {
+            $header = "<span>MEDICO: <b>$doctor</b></span><br>"
                 . "<span>FECHA: <b>$moment</b></b></span><br>"
                 . "<span>PACIENTE: <b>$name</b></span><br>"
                 . "<span>CLAVE: <b>$code</b></span><br>"
                 . "<span>EDAD: <b>$age</b></span><br>";
+            $content = $header . $cont->content;
+        } else {
+            $content = $cont->content;
+        }
 
-        return response()->json($header . $cont->content);
+        return response()->json($content);
     }
 
     public function setStatus(Request $request) {
@@ -53,10 +58,9 @@ class ServiceController extends Controller
     }
 
     public function storeContent(Request $request) {
-        $subcontent =  $request->input('content');
-        $content =
         ServiceDetails::query()->where('id', $request->input('id'))->update([
-            'content' => $request->input('content')
+            'content' => $request->input('content'),
+            'head' => 1
         ]);
         return response()->json('Datos actulizados con exito!');
     }
@@ -99,8 +103,6 @@ class ServiceController extends Controller
             $service->analysis()->create([
                 'analysis_id' => $det['analysis_id'],
                 'content' => $content->content,
-                'barcode' => $det['barcode'],
-                'barcode_quantity' => $det['barcode_quantity'],
                 'description' => $det['description'],
             ]);
             $priceTotal +=  $det['price'];
@@ -124,8 +126,6 @@ class ServiceController extends Controller
             $service->analysis()->create([
                 'analysis_id' => $det['analysis_id'],
                 'content' => $content->content,
-                'barcode' => $det['barcode'],
-                'barcode_quantity' => $det['barcode_quantity'],
                 'description' => $det['description'],
             ]);
             $priceTotal +=  $det['price'];

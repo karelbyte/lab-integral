@@ -19,6 +19,8 @@ class CreateServicesTable extends Migration
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('clients');
             $table->string('doctor');
+            $table->string('barcode');
+            $table->integer('barcode_quantiy');
             $table->string('note',500);
             $table->decimal('discount', 10, 2)->default(0);
             $table->decimal('price', 10, 2)->default(0);

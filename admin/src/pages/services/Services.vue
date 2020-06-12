@@ -1,0 +1,325 @@
+<template>
+  <q-page class=" q-pa-md">
+    <div class="gt-xs row flex q-mb-md">
+      <q-breadcrumbs class="text-grey">
+        <q-breadcrumbs-el label="Servicios" />
+        <q-breadcrumbs-el label="Listado" />
+        <q-breadcrumbs-el v-if="views.news" label="Nueva" />
+      </q-breadcrumbs>
+    </div>
+    <div id="print" hidden>
+      <span style="font-size: 8px; margin-left: 25px">{{toPrint.name.substr(0, 17)}}</span><br>
+      <span style="writing-mode: vertical-lr; transform: translateY(-40px)  rotate(180deg); font-size: 12px;">{{toPrint.codeAnalysis}}</span>
+      <barcode :value="toPrint.barcode" :options="qbOptions2" tag="svg"/>
+    </div>
+    <!-- LISTADO DE SERVICIOS -->
+    <div v-if="views.list">
+      <div class="row">
+        <div class="col-lg-8 col-xs-12"><q-btn color="primary" label="Nueva" @click="newItem"/></div>
+        <div class="col-lg-4 col-xs-12 flex flex-inline">
+          <q-input dense autofocus v-model="filter.val" label="filtro..." style="width: 49%"/>
+          <q-select dense v-model="filter.field" :options="filerOptions" label="filtro por..."
+                    style="width: 50%"
+          >
+            <template v-slot:option="scope">
+              <q-item
+                v-bind="scope.itemProps"
+                v-on="scope.itemEvents"
+              ><q-item-section>
+                <q-item-label caption>{{ scope.opt.label }}</q-item-label>
+              </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+      </div>
+      <div class="row flex">
+        <div class="col-lg-12 col-xs-12 q-mt-xs">
+          <q-card>
+            <q-separator/>
+            <q-card-section class="section-fix">
+              <q-table
+                flat
+                :data="datas"
+                :columns="columns"
+                row-key="id"
+                :loading="loading"
+                :pagination.sync="pagination"
+                :no-data-label="dataLabel"
+                @request="getList"
+                binary-state-sort
+              >
+                <template v-slot:body-cell-balance="props">
+                  <q-td :props="props">
+                    <div v-if="props.value > 0">
+                      <q-badge color="red" class="text-black" :label="props.value" />
+                    </div>
+                    <div v-else>
+                      <span>--</span>
+                    </div>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-actions="props">
+                  <q-td :props="props">
+                    <div v-if="props.row.status_id === 1" >
+                      <q-btn dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItem(props.row)"/>
+                      <q-btn dense color="negative"  class="q-mr-xs" icon="fa fa-eraser" @click="eraserShow(props.row)"/>
+                      <q-btn dense color="blue"  class="q-mr-xs" icon="fa fa-barcode" @click="printQr(props.row)"/>
+                    </div>
+                    <q-btn dense color="purple" icon="fa fa-vial" class="q-mr-xs" >
+                      <q-menu :content-style="{ backgroundColor: '#eee', color: 'black'}" anchor="bottom left" self="top right">
+                        <q-list style="min-width: 100px">
+                          <div v-for="des in props.row.analysis" :key="des.id">
+                            <q-item  clickable v-close-popup @click="showEditorAnalysis(des.id, props.row.status_id)">
+                              <q-item-section> {{des.description.substr(0, 20)}}...</q-item-section>
+                            </q-item>
+                            <q-separator />
+                          </div>
+                        </q-list>
+                      </q-menu>
+                    </q-btn>
+                    <q-btn v-if="props.row.status_id === 1" dense color="info" class="text-black" label="ENTREGAR" @click="changeStatusService(props.row)"/>
+                  </q-td>
+                </template>
+              </q-table>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+    </div>
+    <!-- CREAR SERVICIO -->
+    <div v-if="views.news">
+      <q-card style="width: 100%">
+        <q-card-section>
+          {{titleForm}}
+        </q-card-section><q-separator/>
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined autofocus type="date" v-model="item.moment" class="q-mb-sm"/>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 q-pa-sm">
+            <q-select
+              v-model="client"
+              use-input
+              :disable="isItemEdit"
+              input-debounce="0"
+              dense outlined
+              :options="clientsSearch"
+              option-label="names"
+              option-value="id"
+              map-options
+              @filter="filterFnClients"
+              class="q-mb-sm"
+              autofocus
+              label="Cliente"
+            >
+              <template v-slot:option="scope">
+                <q-item
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label caption>{{ scope.opt.names }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Sin resultados
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined v-model="item.doctor" label="Doctor" class="q-mb-sm"/>
+          </div>
+          <div v-if="client !== null && item.barcode !== ''" style="position:absolute; left: calc(70vw - 80px)">
+            <span style="font-size: 10px; margin-left: 10px">{{client.names.substr(0, 16)}}</span><br>
+            <span class="texto-vertical">{{item.code}}</span>
+            <barcode :value="item.barcode" :options="qbOptions" tag="img"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 q-pa-sm">
+            <q-btn label="+" style="background-color: brown" @click="newItemDetail"/>
+          </div>
+          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined v-only-numbers v-model.number="item.discount" label="Descuento" class="q-mb-sm"/>
+          </div>
+          <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined v-only-numbers v-model.number="item.advance" label="Pagado" class="q-mb-sm"/>
+          </div>
+          <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined v-model="item.barcode" label="Codigo de barra" class="q-mb-md"/>
+          </div>
+          <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+            <q-input dense outlined v-model.number="item.barcode_quantity" label="Cantidad de etiquetas" class="q-mb-md"/>
+          </div>
+        </div>
+        <q-card-section class="section-fix">
+          <q-table
+            flat
+            square
+            :data="item.analysis"
+            :columns="productsColumns"
+            row-key="id"
+            :loading="loading"
+            :no-data-label="dataLabel"
+            @request="getList"
+          >
+            <template v-slot:body-cell-actions="props">
+              <q-td :props="props">
+                <q-btn dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItemDetail(props.row)"/>
+                <q-btn dense color="negative" icon="fa fa-eraser" @click="eraserShowItemDetail(props.row)"/>
+              </q-td>
+            </template>
+            <template v-slot:bottom-row>
+              <q-tr>
+                <q-td class="text-right">
+                  Subtotal
+                </q-td>
+                <q-td class="text-left">
+                  <span>{{getSubTotal}}</span>
+                </q-td>
+                <q-td class="text-right">
+                  <span style="font-size: 18px">Total</span>
+                </q-td>
+                <q-td class="text-left">
+                  <b><span style="font-size: 18px" class="text-black">{{getTotal}}</span></b>
+                </q-td>
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card-section>
+        <q-separator/>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+          <q-input dense outlined autogrow type="textarea" v-model="item.note" label="Nota"/>
+        </div>
+        <q-separator/>
+        <q-card-section>
+          <q-btn v-if="IsSaveWard()" dense label="Guardar servicio" class="q-mr-xs" color="positive" @click="saveItem()"/>
+          <q-btn dense flat label="Cerrar" v-close-popup @click="close()" />
+        </q-card-section>
+      </q-card>
+    </div>
+    <!-- FORMA DE AÑADIR DETALLE Al SERVICIO / EDITAR -->
+    <q-dialog v-model="showFormDetail" persistent transition-show="scale" transition-hide="scale">
+      <q-card  style="width: 700px; max-width: 80vw;">
+        <q-card-section>
+          Añadir analisis
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="row">
+            <div class="col-lg-12 col-xs-12">
+              <q-select
+                v-model="analysis_aux"
+                use-input
+                :disable="isItemDetailEdit"
+                input-debounce="0"
+                dense outlined
+                :options="analysisSearch"
+                option-label="description"
+                option-value="id"
+                map-options
+                @filter="filterFn"
+                class="q-mb-sm"
+                autofocus
+                @input="setItemDet"
+              >
+                <template v-slot:option="scope">
+                  <q-item
+                    v-bind="scope.itemProps"
+                    v-on="scope.itemEvents"
+                  >
+                    <q-item-section>
+                      <q-item-label caption>{{ scope.opt.description }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      Sin resultados!
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+              <q-input dense outlined v-model="itemDetail.price" label="Precio" class="q-mb-md"/>
+              <q-separator class="q-mb-md"/>
+            </div>
+          </div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn v-if="IsSaveDetail()" dense label="Guardar" color="positive" @click="addItemDetail()"/>
+          <q-btn dense flat label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!--  FORM PLASMAR RESULTADOS -->
+    <q-dialog v-model="showEditResult" persistent transition-show="scale" transition-hide="scale">
+      <q-card  style="width: 900px; max-width: 80vw;">
+        <q-card-section class="bg-purple-5">
+          Resultados
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <tinymce  id="d1" v-model="dataResult.content" :toolbar1="tool" :other_options="tinyOptions"/>
+        </q-card-section>
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn v-if="statusEditResult === 1" dense label="Guardar" color="positive" v-close-popup  @click="saveContentResult"/>
+          <q-btn dense flat label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!--  ELIMINAR DETALLE DEL SERVICIO -->
+    <q-dialog v-model="showFormDeleteItem" persistent transition-show="scale" transition-hide="scale">
+      <q-card  style="width: 700px; max-width: 80vw;">
+        <q-card-section class="bg-red-5">
+          Eliminar detalle
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <p>Seguro que desea eliminar: <b> {{this.itemDetail.description}}</b> ?</p>
+          <p>Esta operación es irrevercible!</p>
+        </q-card-section>
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn dense label="Eliminar" color="negative" v-close-popup  @click="eraserItemDetail"/>
+          <q-btn dense flat label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <!-- COMP ELIMINAR -->
+    <delete-item
+      :showFormDelete="showFormDelete"
+      :item="item"
+      title="Eliminar servicio"
+      url="/services/eraser"
+      targets="client,analysis_description"
+      @updateList="updateOfEraser"
+    />
+  </q-page>
+</template>
+
+<script src="./services.js"></script>
+
+<style scoped>
+  .filter-input > div {
+    width: 60px;
+  }
+  .section-fix {
+    padding: 0 !important;
+  }
+
+  .texto-vertical {
+    writing-mode: vertical-lr;
+    transform: translateY(-40px)  rotate(180deg);
+    font-size: 12px;
+  }
+
+</style>

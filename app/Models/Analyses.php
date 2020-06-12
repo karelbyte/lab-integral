@@ -32,4 +32,9 @@ class Analyses extends Model
         return $this->hasMany(AnalysesDetails::class, 'analysis_id', 'id');
     }
 
+    public function services()
+    {
+        return $this->hasMany(ServiceDetails::class, 'analysis_id', 'id');
+    }
+
 }

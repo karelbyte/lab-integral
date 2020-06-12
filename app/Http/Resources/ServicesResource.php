@@ -27,6 +27,8 @@ class ServicesResource extends JsonResource
             'client' => $this->client->names,
             'status_id' => $this->status_id,
             'status' => $this->status->description,
+            'barcode' => $this->barcode,
+            'barcode_quantity' => $this->barcode_quantity,
             'note' => $this->note,
             'analysis' => ServiceDetailsResource::collection($this->analysis),
             'analysis_description' => count($this->analysis) > 1 ? 'Multiples' : $this->analysis[0]->description

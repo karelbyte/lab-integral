@@ -74,7 +74,7 @@
             <q-input v-only-numbers dense outlined v-model.number="item.price" label="Precio" class="q-mb-sm"/>
           </div>
           <div :hidden="templateOff" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
-          <tinymce  id="d1" v-model="item.content" :other_options="tinyOptions"/>
+          <tinymce  id="d1" v-model="item.content" :toolbar1="tool" :other_options="tinyOptions"/>
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
            <q-btn v-if="item.affects" label="Añadir Producto" @click="newItemDetail"/>
@@ -211,8 +211,11 @@ export default {
       tinyOptions: {
         height: '40vh',
         language_url: '../statics/es.js',
-        menubar: false
+        menubar: true
       },
+      tool: 'formatselect | bold italic strikethrough forecolor backcolor' +
+        ' | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat' +
+        '| table preview print | code',
       pagination: {
         sortBy: 'description',
         descending: true,

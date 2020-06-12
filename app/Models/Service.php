@@ -17,7 +17,9 @@ class Service extends Model
     /**
      * @var array
      */
-    protected $fillable = ['client_id', 'moment', 'doctor',  'price', 'note', 'discount', 'advance', 'status_id', 'created_at', 'updated_at'];
+    protected $fillable = ['client_id', 'moment', 'doctor',  'price', 'note',
+        'barcode', 'barcode_quantity',
+        'discount', 'advance', 'status_id', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -11,8 +11,8 @@
       </q-card-section>
       <q-separator/>
       <q-card-actions align="right">
-        <q-btn v-if="item.description !== ''" dense label="Eliminar" color="negative" v-close-popup  @click="eraser"/>
-        <q-btn dense flat label="Cerrar" @click="close" />
+        <q-btn v-if="item.description !== ''" dense label="Eliminar" color="negative"  @click="eraser"/>
+        <q-btn dense flat label="Cerrar" @click="close" v-close-popup  />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -41,10 +41,12 @@ export default {
   },
   methods: {
     eraser () {
+      console.log('entro')
       this.$axios.post(ApiUrl + this.url, { id: this.item.id }).then(res => {
         this.$noty.positive(res.data)
         this.$emit('updateList')
       }).catch(er => {
+        this.$emit('updateList')
         this.$noty.negative(er.response.data)
       })
     },

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AnalisesResource;
 use App\Models\Analyses;
+use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Http\Request;
 
 class AnalysisController extends Controller
@@ -72,7 +73,14 @@ class AnalysisController extends Controller
 
     public function destroy(Request $request)
     {
-        Analyses::query()->where('id', $request->id)->delete();
-        return response()->json('Dato eliminado correctamente.');
+
+        $analysis = Analyses::query()->findOrFail($request->id);
+        if ($analysis->services()->count() > 0) {
+            return response()->json('Operación no permitida, tienen dependecias!', 402);
+        } else {
+            Analyses::destroy($request->id);
+            return response()->json('Dato eliminado correctamente.');
+        }
+
     }
 }
