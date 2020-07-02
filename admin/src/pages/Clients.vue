@@ -74,7 +74,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-          <q-input dense outlined autofocus v-model="item.names" label="Nombres" class="q-mb-xs"/>
+          <q-input ref="name" dense outlined autofocus v-model="item.names" label="Nombres" class="q-mb-xs"/>
           <span>Fecha de nacimiento</span>
           <q-input dense outlined type="date" v-model="item.birthday" class="q-mb-sm"/>
           <q-input dense outlined v-model="item.address" label="Direccion" class="q-mb-xs"/>
@@ -83,7 +83,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-actions align="right">
-          <q-btn v-if="validateSave" dense label="Guardar" color="positive" v-close-popup  @click="saveItem"/>
+          <q-btn v-if="validateSave" dense label="Guardar" color="positive"  @click="saveItem"/>
           <q-btn dense flat label="Cerrar" v-close-popup />
         </q-card-actions>
       </q-card>
@@ -262,6 +262,8 @@ export default {
         data: this.item
       }).then(res => {
         this.$noty.positive(res.data)
+        this.item = { ...this.itemClear }
+        this.$refs.name.focus()
         this.getList({
           pagination: this.pagination
         })

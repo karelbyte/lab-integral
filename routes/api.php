@@ -43,6 +43,13 @@ Route::prefix('clients')->group(function () {
     Route::post('eraser', 'ClientController@destroy');
 });
 
+Route::prefix('doctors')->group(function () {
+    Route::post('list', 'DoctorsController@list');
+    Route::post('post', 'DoctorsController@store');
+    Route::post('update', 'DoctorsController@update');
+    Route::post('eraser', 'DoctorsController@destroy');
+});
+
 
 Route::prefix('analysis')->group(function () {
     Route::post('list', 'AnalysisController@list');

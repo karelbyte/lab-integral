@@ -300,17 +300,23 @@ export default {
       })
     },
     printQr (item) {
-      console.log(item)
+      let name = item.client.replace(/ /g, '-').substring(0, 22)
       for (let i = 0; i < item.barcode_quantity; i++) {
-        this.toPrint.name = item.client
-        this.toPrint.codeAnalysis = item.code
-        this.toPrint.barcode = item.barcode
-        let ficha = document.getElementById('print')
-        let ventimp = window.open('', 'PRINT', 'height=100,width=100')
-        ventimp.document.write(`<style> body {height:472px; width:354px;}  @page {size:auto; margin: 0;}</style>`)
-        ventimp.document.write(ficha.innerHTML)
-        ventimp.print()
-        ventimp.close()
+        /* eslint-disable */
+        let template = `^XA
+        ^FO30,0^ADN,11,7^FD`+ name + `^FS
+        ^FO30,25^BY2^BCN,60,N,N
+        ^FT30,90^A0N,23,26^FH\^FD`+item.barcode+`^FS
+        ^PQ1,0,1,Y^XZ
+        ^XZ`
+        /* eslint-enable */
+        let printWindow = window.open('', 'print', 'height:100,width:100')
+        printWindow.document.open('text/plain')
+        printWindow.document.write(template)
+        printWindow.document.close()
+        printWindow.focus()
+        printWindow.print()
+        printWindow.close()
       }
     },
     setItemDet (value) {
