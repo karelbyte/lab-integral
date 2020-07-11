@@ -18,12 +18,14 @@ class CreateServicesTable extends Migration
             $table->date('moment');
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('clients');
-            $table->string('doctor');
+            $table->string('doctor_id');
+            $table->foreign('doctor_id')->references('id')->on('doctor');
             $table->string('barcode');
-            $table->integer('barcode_quantiy');
-            $table->string('note',500);
+            $table->integer('barcode_quantity');
+            $table->string('note',500)->nullable();
             $table->decimal('discount', 10, 2)->default(0);
             $table->decimal('price', 10, 2)->default(0);
+            $table->decimal('advance', 10, 2)->default(0);
             $table->tinyInteger('status_id');
             $table->timestamps();
             $table->engine = 'InnoDB';

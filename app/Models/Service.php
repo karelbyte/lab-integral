@@ -17,9 +17,9 @@ class Service extends Model
     /**
      * @var array
      */
-    protected $fillable = ['client_id', 'moment', 'doctor',  'price', 'note',
+    protected $fillable = ['client_id', 'moment', 'doctor_id',  'price', 'note',
         'barcode', 'barcode_quantity',
-        'discount', 'advance', 'status_id', 'created_at', 'updated_at'];
+        'discount', 'advance', 'status_id',  'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -27,6 +27,11 @@ class Service extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
     }
 
     /**

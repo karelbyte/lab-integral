@@ -15,7 +15,6 @@ class CreateServicesStatusTable extends Migration
     {
         Schema::create('services_status', function (Blueprint $table) {
             $table->unsignedTinyInteger('id')->autoIncrement();
-            $table->primary('id');
             $table->string('description');
             $table->timestamps();
             $table->engine = 'InnoDB';

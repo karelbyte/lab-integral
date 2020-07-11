@@ -19,6 +19,7 @@ class CreateAnalysesTable extends Migration
             $table->string('code');
             $table->text('content');
             $table->decimal('price', 10, 2);
+            $table->tinyInteger('affects');
             $table->timestamps();
             $table->engine = 'InnoDB';
             $table->charset = 'utf8';

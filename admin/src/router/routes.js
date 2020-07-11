@@ -15,6 +15,13 @@ const routes = [
     ]
   },
   {
+    path: '/doctores',
+    component: () => import('layouts/Layout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Doctors.vue') }
+    ]
+  },
+  {
     path: '/services',
     component: () => import('layouts/Layout.vue'),
     children: [

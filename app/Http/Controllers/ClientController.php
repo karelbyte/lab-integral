@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 class ClientController extends Controller
 {
     public function resources() {
-
+        $data = [
+            'clients' => Client::query()->select('id', 'names')->get(),
+        ];
+        return response()->json($data);
     }
 
     public function list(Request $request)

@@ -14,6 +14,10 @@ class ServicesResource extends JsonResource
      */
     public function toArray($request)
     {
+       $analisis = '';
+       if ( isset($this->analysis) ) {
+           $analisis =  count($this->analysis) > 1 ? 'Multiples' : $this->analysis[0]->description;
+       }
 
         return [
             'id' => $this->id,
@@ -22,16 +26,17 @@ class ServicesResource extends JsonResource
             'advance' => $this->advance,
             'balance' => number_format($this->price - $this->advance, 2, '.', ''),
             'moment'=> $this->moment,
-            'doctor' =>  $this->doctor,
+            'doctor_id' =>  $this->doctor_id,
             'client_id' => $this->client_id,
             'client' => $this->client->names,
+            'doctor' => $this->doctor->names,
             'status_id' => $this->status_id,
             'status' => $this->status->description,
             'barcode' => $this->barcode,
             'barcode_quantity' => $this->barcode_quantity,
             'note' => $this->note,
             'analysis' => ServiceDetailsResource::collection($this->analysis),
-            'analysis_description' => count($this->analysis) > 1 ? 'Multiples' : $this->analysis[0]->description
+            'analysis_description' =>  $analisis
         ];
     }
 }

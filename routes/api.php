@@ -45,6 +45,7 @@ Route::prefix('clients')->group(function () {
 
 Route::prefix('doctors')->group(function () {
     Route::post('list', 'DoctorsController@list');
+    Route::get('resources', 'DoctorsController@resources');
     Route::post('post', 'DoctorsController@store');
     Route::post('update', 'DoctorsController@update');
     Route::post('eraser', 'DoctorsController@destroy');

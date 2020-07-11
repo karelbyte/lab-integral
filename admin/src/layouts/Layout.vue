@@ -40,6 +40,15 @@
             <q-item-label>Clientes</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item v-ripple clickable :active="isActiveItem(11)" @click="goToUrl('doctores', 11)"
+                active-class="text-orange-5">
+          <q-item-section avatar>
+            <q-icon name="fa fa-users" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Doctores</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-separator></q-separator>
         <q-item v-ripple clickable :active="isActiveItem(1)" @click="goToUrl('services', 1)"
                 active-class="text-orange-5"

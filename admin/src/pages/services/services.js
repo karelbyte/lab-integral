@@ -2,13 +2,17 @@ import tinymce from 'vue-tinymce-editor'
 import VueBarcode from '@chenfengyuan/vue-barcode'
 import { ApiUrl, onview, generateId, dateToUS } from '../../boot/tools'
 import DeleteItem from '../../components/DeleteItem'
+import ClientAdd from '../../components/ClientAdd'
+import DoctorAdd from '../../components/DoctorAdd'
 export default {
   name: 'services',
   components: {
-    DeleteItem, 'barcode': VueBarcode, tinymce
+    DeleteItem, 'barcode': VueBarcode, tinymce, ClientAdd, DoctorAdd
   },
   data () {
     return {
+      showFormClient: false,
+      showFormDoctor: false,
       statusEditResult: 1,
       showEditResult: false,
       dataResult: {
@@ -24,6 +28,7 @@ export default {
         ' | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat' +
         '| table preview print',
       client: null,
+      doctor: null,
       analysis_aux: null,
       toPrint: {
         name: '',
@@ -65,6 +70,15 @@ export default {
           align: 'left',
           field: 'moment',
           format: val => new Date(val.replace(/-/g, '/')).toLocaleDateString(),
+          headerClasses: 'bg-primary text-white',
+          sortable: true
+        },
+        {
+          name: 'barcode',
+          required: true,
+          label: 'QB',
+          align: 'left',
+          field: 'barcode',
           headerClasses: 'bg-primary text-white',
           sortable: true
         },
@@ -143,7 +157,7 @@ export default {
         field: {
           value: 'moment',
           label: 'Fecha',
-          type: 'int'
+          type: 'date'
         },
         val: ''
       },
@@ -151,7 +165,20 @@ export default {
         {
           value: 'moment',
           label: 'Fecha',
-          type: 'int'
+          type: 'date',
+          join: null
+        },
+        {
+          value: 'barcode',
+          label: 'CB',
+          type: 'text',
+          join: null
+        },
+        {
+          value: 'clients.names',
+          label: 'Cliente',
+          type: 'text',
+          join: 'clients'
         }
       ],
       loading: false,
@@ -160,7 +187,7 @@ export default {
         moment: '',
         client_id: '',
         status_id: 1,
-        doctor: '',
+        doctor_id: '',
         price: 0,
         barcode: '',
         barcode_quantity: 1,
@@ -172,7 +199,7 @@ export default {
         id: 0,
         moment: '',
         client_id: '',
-        doctor: '',
+        doctor_id: '',
         price: 0,
         barcode: '',
         barcode_quantity: 1,
@@ -182,7 +209,9 @@ export default {
         analysis: []
       },
       clients: [],
+      doctors: [],
       clientsSearch: [],
+      doctorsSearch: [],
       analysis: [],
       analysisSearch: [],
       isItemEdit: false,
@@ -228,7 +257,8 @@ export default {
           sortable: true
         },
         { name: 'actions', label: 'ACCIONES', field: '', align: 'center', headerClasses: 'bg-primary text-white' }
-      ]
+      ],
+      showFormChangeStatusService: false
     }
   },
   watch: {
@@ -275,6 +305,9 @@ export default {
     )
   },
   methods: {
+    formChangeStatusService () {
+      this.showFormChangeStatusService = true
+    },
     changeStatusService (itm) {
       this.$axios.post(ApiUrl + '/services/set-status', { id: itm.id }).then(res => {
         this.$noty.positive(res.data)
@@ -356,6 +389,18 @@ export default {
         this.clientsSearch = this.clients.filter(v => v.names.toLowerCase().indexOf(needle) > -1)
       })
     },
+    filterFnDoctors (val, update) {
+      if (val === '') {
+        update(() => {
+          this.doctorsSearch = this.doctors
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.doctorsSearch = this.doctors.filter(v => v.names.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     getList (props) {
       let toServer = {
         pagination: props.pagination,
@@ -404,7 +449,9 @@ export default {
         this.act = 'post'
         this.clients = res.data.clients
         this.analysis = res.data.analysis
+        this.doctors = res.data.doctors
         this.client = null
+        this.doctor = null
         this.titleForm = 'Añadir servicio a cliente.'
         this.item = { ...this.itemClear }
         this.item.analysis = []
@@ -413,20 +460,41 @@ export default {
         onview('news', this.views)
       })
     },
+    getClientList () {
+      this.$axios.get(ApiUrl + '/clients/resources').then(res => {
+        this.clients = res.data.clients
+        this.showFormClient = false
+      })
+    },
+    closeFormClient () {
+      this.showFormClient = false
+    },
+    getDoctorList () {
+      this.$axios.get(ApiUrl + '/doctors/resources').then(res => {
+        this.doctors = res.data.doctors
+        this.showFormDoctor = false
+      })
+    },
+    closeFormDoctor () {
+      this.showFormDoctor = false
+    },
     editItem (itm) {
       this.$axios.get(ApiUrl + '/services/resources').then(res => {
         this.clients = res.data.clients
         this.analysis = res.data.analysis
+        this.doctors = res.data.doctors
         this.titleForm = 'Editar servicio a cliente.'
         this.isItemEdit = true
         this.act = 'update'
         this.item = { ...itm }
         this.client = this.clients.find(it => it.id === itm.client_id)
+        this.doctor = this.doctors.find(doc => doc.id === itm.doctor_id)
         onview('news', this.views)
       })
     },
     saveItem () {
       this.item.client_id = this.client.id
+      this.item.doctor_id = this.doctor.id
       this.$axios({
         method: 'post',
         url: ApiUrl + '/services/' + this.act,
@@ -466,9 +534,10 @@ export default {
     IsSaveWard () {
       let client = this.client !== null
       let moment = this.item.moment !== ''
-      let doc = this.item.doctor
+      let cb = this.item.barcode !== ''
+      let doc = this.doctor !== null
       let data = this.item.analysis.length > 0
-      return client && moment && doc && data
+      return client && moment && doc && data && cb
     },
     eraserShowItemDetail (it) {
       this.itemDetail = { ...it }

@@ -12,5 +12,15 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UsersTableSeeder::class);
+        $statusList = [
+            'EN PROCESO',
+            'CERRADA',
+        ];
+        foreach ($statusList as $status) {
+            \App\Models\ServiceStatus::query()->create([
+                'description' => $status
+            ]);
+        }
+
     }
 }

@@ -17,7 +17,7 @@
       <div class="row">
         <div class="col-lg-8 col-xs-12"><q-btn color="primary" label="Nueva" @click="newItem"/></div>
         <div class="col-lg-4 col-xs-12 flex flex-inline">
-          <q-input dense autofocus v-model="filter.val" label="filtro..." style="width: 49%"/>
+          <q-input dense autofocus :type="filter.field.type" v-model="filter.val" debounce="300"   stack-label label="filtro..." style="width: 49%"/>
           <q-select dense v-model="filter.field" :options="filerOptions" label="filtro por..."
                     style="width: 50%"
           >
@@ -61,12 +61,72 @@
                 </template>
                 <template v-slot:body-cell-actions="props">
                   <q-td :props="props">
-                    <div v-if="props.row.status_id === 1" >
-                      <q-btn dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItem(props.row)"/>
-                      <q-btn dense color="negative"  class="q-mr-xs" icon="fa fa-eraser" @click="eraserShow(props.row)"/>
-                      <q-btn dense color="blue"  class="q-mr-xs" icon="fa fa-barcode" @click="printQr(props.row)"/>
-                    </div>
-                    <q-btn dense color="purple" icon="fa fa-vial" class="q-mr-xs" >
+                    <q-btn color="primary" flat icon="fa fa-ellipsis-h">
+                      <q-menu transition-show="flip-right"
+                              transition-hide="flip-left"
+                              :offset="[-50, 0]"
+                      >
+                        <q-list style="min-width: 100px">
+                          <q-item  v-if="props.row.status_id === 1" clickable v-close-popup @click="editItem(props.row)">
+                            <q-item-section avatar>
+                              <q-icon color="secondary" name="fa fa-edit" />
+                            </q-item-section>
+                            <q-item-section>Actualizar</q-item-section>
+                          </q-item>
+                          <q-item  v-if="props.row.status_id === 1" clickable v-close-popup @click="eraserShow(props.row)">
+                            <q-item-section avatar>
+                              <q-icon color="negative" name="fa fa-eraser" />
+                            </q-item-section>
+                            <q-item-section>Eliminar</q-item-section>
+                          </q-item>
+                          <q-separator />
+                          <q-item clickable v-close-popup @click="printQr(props.row)">
+                            <q-item-section avatar>
+                              <q-icon color="blue" name="fa fa-barcode" />
+                            </q-item-section>
+                            <q-item-section>Codigo Barra</q-item-section>
+                          </q-item>
+                          <q-item clickable>
+                            <q-item-section avatar>
+                              <q-icon color="purple" name="fa fa-vials" />
+                            </q-item-section>
+                            <q-item-section>Analisis</q-item-section>
+                            <q-item-section side>
+                              <q-icon name="keyboard_arrow_right" />
+                            </q-item-section>
+                            <q-menu  anchor="top right" self="top left">
+                              <q-list style="min-width: 100px">
+                                <div v-for="des in props.row.analysis" :key="des.id">
+                                  <q-item  clickable v-close-popup @click="showEditorAnalysis(des.id, props.row.status_id)">
+                                    <q-item-section> {{des.description.substr(0, 20)}}...</q-item-section>
+                                  </q-item>
+                                  <q-separator />
+                                </div>
+                              </q-list>
+                            </q-menu>
+                          </q-item>
+                        </q-list>
+                        <q-item  v-if="props.row.status_id === 1" clickable v-close-popup  @click="changeStatusService(props.row)">
+                          <q-item-section avatar>
+                            <q-icon color="green" name="fa fa-envelope" />
+                          </q-item-section>
+                          <q-item-section>Entregar</q-item-section>
+                        </q-item>
+                        <q-item  clickable v-close-popup>
+                          <q-item-section avatar>
+                            <q-icon color="brown" name="fa fa-at" />
+                          </q-item-section>
+                          <q-item-section>Enviar por correo</q-item-section>
+                        </q-item>
+                        <q-item  clickable v-close-popup>
+                          <q-item-section avatar>
+                            <q-icon color="cyan" name="fa fa-globe" />
+                          </q-item-section>
+                          <q-item-section>Publicar</q-item-section>
+                        </q-item>
+                      </q-menu>
+                    </q-btn>
+                    <!--<q-btn dense color="purple" icon="fa fa-vial" class="q-mr-xs" >
                       <q-menu :content-style="{ backgroundColor: '#eee', color: 'black'}" anchor="bottom left" self="top right">
                         <q-list style="min-width: 100px">
                           <div v-for="des in props.row.analysis" :key="des.id">
@@ -78,7 +138,7 @@
                         </q-list>
                       </q-menu>
                     </q-btn>
-                    <q-btn v-if="props.row.status_id === 1" dense color="info" class="text-black" label="ENTREGAR" @click="changeStatusService(props.row)"/>
+                    <q-btn v-if="props.row.status_id === 1" dense color="info" class="text-black" label="ENTREGAR" @click="changeStatusService(props.row)"/> -->
                   </q-td>
                 </template>
               </q-table>
@@ -95,7 +155,7 @@
         </q-card-section><q-separator/>
         <div class="row">
           <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
-            <q-input dense outlined autofocus type="date" v-model="item.moment" class="q-mb-sm"/>
+            <q-input dense outlined  type="date" v-model="item.moment" class="q-mb-sm"/>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 q-pa-sm">
             <q-select
@@ -131,9 +191,41 @@
                 </q-item>
               </template>
             </q-select>
+            <q-btn @click="showFormClient = true">+</q-btn>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
-            <q-input dense outlined v-model="item.doctor" label="Doctor" class="q-mb-sm"/>
+            <q-select
+              v-model="doctor"
+              use-input
+              input-debounce="0"
+              dense outlined
+              :options="doctorsSearch"
+              option-label="names"
+              option-value="id"
+              map-options
+              @filter="filterFnDoctors"
+              class="q-mb-sm"
+              label="Doctores"
+            >
+              <template v-slot:option="scope">
+                <q-item
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label caption>{{ scope.opt.names }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Sin resultados
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-btn @click="showFormDoctor = true">+</q-btn>
           </div>
           <div v-if="client !== null && item.barcode !== ''" style="position:absolute; left: calc(70vw - 80px)">
             <span style="font-size: 10px; margin-left: 10px">{{client.names.substr(0, 16)}}</span><br>
@@ -143,7 +235,7 @@
         </div>
         <div class="row">
           <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 q-pa-sm">
-            <q-btn label="+" style="background-color: brown" @click="newItemDetail"/>
+            <q-btn label="Analisis" style="background-color: brown; color:wheat" @click="newItemDetail"/>
           </div>
           <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
             <q-input dense outlined v-only-numbers v-model.number="item.discount" label="Descuento" class="q-mb-sm"/>
@@ -295,6 +387,10 @@
       </q-card>
     </q-dialog>
     <!-- COMP ELIMINAR -->
+    <!-- AÑADIR CLIENTES -->
+    <ClientAdd :showFormClient="showFormClient" act="post" @update="getClientList" @close="closeFormClient"></ClientAdd>
+    <!-- AÑADIR Doctor -->
+    <DoctorAdd :showFormDoctor="showFormDoctor" act="post" @update="getDoctorList" @close="closeFormDoctor"></DoctorAdd>
     <delete-item
       :showFormDelete="showFormDelete"
       :item="item"

@@ -19,39 +19,11 @@
 </template>
 
 <script>
-import { ApiUrl } from '../boot/tools'
-
 export default {
-  name: 'DeleteItem',
-  props: ['showFormDelete', 'url', 'item', 'title', 'targets'],
-  data () {
-    return {
-      showForm: false
-    }
-  },
-  computed: {
-    targets_: function () {
-      return this.targets.indexOf(',') > 0 ? this.targets.split(',') : [this.targets]
-    }
-  },
-  watch: {
-    showFormDelete: function () {
-      this.showForm = this.showFormDelete
-    }
-  },
-  methods: {
-    eraser () {
-      this.$axios.post(ApiUrl + this.url, { id: this.item.id }).then(res => {
-        this.$noty.positive(res.data)
-        this.$emit('updateList')
-      }).catch(er => {
-        this.$emit('updateList')
-        this.$noty.negative(er.response.data)
-      })
-    },
-    close () {
-      this.$emit('updateList')
-    }
-  }
+  name: 'FormChangeServiceStatus'
 }
 </script>
+
+<style scoped>
+
+</style>

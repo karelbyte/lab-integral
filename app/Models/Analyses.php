@@ -24,7 +24,7 @@ class Analyses extends Model
     /**
      * @var array
      */
-    protected $fillable = ['description', 'code', 'content', 'price', 'created_at', 'updated_at', 'affects'];
+    protected $fillable = ['description', 'code', 'content', 'price', 'affects', 'created_at', 'updated_at', 'affects'];
 
 
     public function details()

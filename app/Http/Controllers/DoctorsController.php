@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 
 class DoctorsController extends Controller
 {
+    public function resources() {
+        $data = [
+            'doctors' => Doctor::query()->select('id', 'names')->get(),
+        ];
+        return response()->json($data);
+    }
+
     public function list(Request $request)
     {
         $take = (int) $request->input('pagination.rowsPerPage');

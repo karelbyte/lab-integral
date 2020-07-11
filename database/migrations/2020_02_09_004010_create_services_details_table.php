@@ -20,6 +20,7 @@ class CreateServicesDetailsTable extends Migration
             $table->unsignedBigInteger('analysis_id');
             $table->foreign('analysis_id')->references('id')->on('analyses');
             $table->longText('content');
+            $table->string('description');
             $table->tinyInteger('head')->default(0);
             $table->timestamps();
         });
