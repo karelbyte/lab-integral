@@ -61,8 +61,8 @@
     <delete-item
       :showFormDelete="showFormDelete"
       :item="item"
-      title="Eliminar proveedor"
-      url="/clients/eraser"
+      title="Eliminar doctor"
+      url="/doctors/eraser"
       targets="names"
       @updateList="updateOfEraser"
     />

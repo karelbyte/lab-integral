@@ -262,11 +262,18 @@ export default {
         data: this.item
       }).then(res => {
         this.$noty.positive(res.data)
-        this.item = { ...this.itemClear }
-        this.$refs.name.focus()
-        this.getList({
-          pagination: this.pagination
-        })
+        if (this.act === 'post') {
+          this.item = { ...this.itemClear }
+          this.$refs.name.focus()
+          this.getList({
+            pagination: this.pagination
+          })
+        } else {
+          this.showForm = false
+          this.getList({
+            pagination: this.pagination
+          })
+        }
       })
     },
     eraserShow (itm) {

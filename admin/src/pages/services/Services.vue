@@ -106,7 +106,7 @@
                             </q-menu>
                           </q-item>
                         </q-list>
-                        <q-item  v-if="props.row.status_id === 1" clickable v-close-popup  @click="changeStatusService(props.row)">
+                        <q-item  v-if="props.row.status_id === 1" clickable v-close-popup  @click="formChangeStatusService(props.row)">
                           <q-item-section avatar>
                             <q-icon color="green" name="fa fa-envelope" />
                           </q-item-section>
@@ -116,29 +116,16 @@
                           <q-item-section avatar>
                             <q-icon color="brown" name="fa fa-at" />
                           </q-item-section>
-                          <q-item-section>Enviar por correo</q-item-section>
+                          <q-item-section>Enviar correo</q-item-section>
                         </q-item>
                         <q-item  clickable v-close-popup>
                           <q-item-section avatar>
                             <q-icon color="cyan" name="fa fa-globe" />
                           </q-item-section>
-                          <q-item-section>Publicar</q-item-section>
+                          <q-item-section>Publicar a web</q-item-section>
                         </q-item>
                       </q-menu>
                     </q-btn>
-                    <!--<q-btn dense color="purple" icon="fa fa-vial" class="q-mr-xs" >
-                      <q-menu :content-style="{ backgroundColor: '#eee', color: 'black'}" anchor="bottom left" self="top right">
-                        <q-list style="min-width: 100px">
-                          <div v-for="des in props.row.analysis" :key="des.id">
-                            <q-item  clickable v-close-popup @click="showEditorAnalysis(des.id, props.row.status_id)">
-                              <q-item-section> {{des.description.substr(0, 20)}}...</q-item-section>
-                            </q-item>
-                            <q-separator />
-                          </div>
-                        </q-list>
-                      </q-menu>
-                    </q-btn>
-                    <q-btn v-if="props.row.status_id === 1" dense color="info" class="text-black" label="ENTREGAR" @click="changeStatusService(props.row)"/> -->
                   </q-td>
                 </template>
               </q-table>
@@ -391,6 +378,8 @@
     <ClientAdd :showFormClient="showFormClient" act="post" @update="getClientList" @close="closeFormClient"></ClientAdd>
     <!-- AÑADIR Doctor -->
     <DoctorAdd :showFormDoctor="showFormDoctor" act="post" @update="getDoctorList" @close="closeFormDoctor"></DoctorAdd>
+    <!--CAMBIAR ESTADO SERVICIO -->
+    <form-change-service-status :show="showFormChangeStatusService" :item="item" @update="getListUpdate" @close="showFormChangeStatusService=false"></form-change-service-status>
     <delete-item
       :showFormDelete="showFormDelete"
       :item="item"
@@ -416,6 +405,14 @@
     writing-mode: vertical-lr;
     transform: translateY(-40px)  rotate(180deg);
     font-size: 12px;
+  }
+
+  tr { cursor:pointer;
+    &.selected {
+      color:#fff;
+      background:#0f0;
+      td:after, td:before { background:none }
+    }
   }
 
 </style>

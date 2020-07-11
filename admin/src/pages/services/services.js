@@ -4,10 +4,11 @@ import { ApiUrl, onview, generateId, dateToUS } from '../../boot/tools'
 import DeleteItem from '../../components/DeleteItem'
 import ClientAdd from '../../components/ClientAdd'
 import DoctorAdd from '../../components/DoctorAdd'
+import FormChangeServiceStatus from '../../components/FormChangeServiceStatus'
 export default {
   name: 'services',
   components: {
-    DeleteItem, 'barcode': VueBarcode, tinymce, ClientAdd, DoctorAdd
+    DeleteItem, 'barcode': VueBarcode, tinymce, ClientAdd, DoctorAdd, FormChangeServiceStatus
   },
   data () {
     return {
@@ -305,8 +306,13 @@ export default {
     )
   },
   methods: {
-    formChangeStatusService () {
-      this.showFormChangeStatusService = true
+    formChangeStatusService (item) {
+      if (parseFloat(item.balance) > 0) {
+        this.item = item
+        this.showFormChangeStatusService = true
+      } else {
+        this.changeStatusService(item)
+      }
     },
     changeStatusService (itm) {
       this.$axios.post(ApiUrl + '/services/set-status', { id: itm.id }).then(res => {
@@ -512,6 +518,12 @@ export default {
           this.$noty.negative(er.response.data)
         }
       })
+    },
+    getListUpdate () {
+      this.getList({
+        pagination: this.pagination
+      })
+      this.showFormChangeStatusService = false
     },
     eraserShow (itm) {
       this.item = { ...itm }

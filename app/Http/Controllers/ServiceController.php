@@ -55,9 +55,10 @@ class ServiceController extends Controller
     }
 
     public function setStatus(Request $request) {
-        Service::query()->where('id', $request->id)->update([
-            'status_id' => 2
-        ]);
+        $service = Service::query()->find($request->id);
+        $service->status_id = 2;
+        $service->advance = $service->price;
+        $service->save();
         return response()->json('Se cambio el estado del servicio a entregado!');
     }
 

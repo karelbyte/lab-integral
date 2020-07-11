@@ -18,8 +18,8 @@ class CreateServicesTable extends Migration
             $table->date('moment');
             $table->unsignedBigInteger('client_id');
             $table->foreign('client_id')->references('id')->on('clients');
-            $table->string('doctor_id');
-            $table->foreign('doctor_id')->references('id')->on('doctor');
+            $table->unsignedBigInteger('doctor_id');
+            $table->foreign('doctor_id')->references('id')->on('doctors');
             $table->string('barcode');
             $table->integer('barcode_quantity');
             $table->string('note',500)->nullable();
