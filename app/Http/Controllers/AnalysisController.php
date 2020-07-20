@@ -76,7 +76,7 @@ class AnalysisController extends Controller
 
         $analysis = Analyses::query()->findOrFail($request->id);
         if ($analysis->services()->count() > 0) {
-            return response()->json('Operación no permitida, tienen dependecias!', 402);
+            return response()->json('El análisis esta en bitácora, no puede ser eliminado!', 402);
         } else {
             Analyses::destroy($request->id);
             return response()->json('Dato eliminado correctamente.');

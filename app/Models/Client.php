@@ -27,4 +27,14 @@ class Client extends Model
      */
     protected $fillable = ['names', 'address', 'birthday', 'email', 'telf', 'created_at', 'updated_at'];
 
+    protected $appends = [
+        'services'
+    ];
+
+    public function getServicesAttribute()
+    {
+        $cant = $this->hasMany(Service::class)->count();
+        return $cant > 0 ? $cant : '';
+    }
+
 }

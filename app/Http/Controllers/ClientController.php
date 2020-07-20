@@ -66,7 +66,7 @@ class ClientController extends Controller
             return response()->json('Dato eliminado correctamente.');
         } catch ( \PDOException $e ) {
             if ($e->getCode() === '23000') {
-                return response()->json('El cliente esta en bitacora, no puede ser eliminado!', 500);
+                return response()->json('El cliente esta en bitácora, no puede ser eliminado!', 500);
             }
         }
         catch ( \Exception $e ) {

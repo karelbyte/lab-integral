@@ -134,6 +134,15 @@ export default {
           headerClasses: 'bg-primary text-white',
           sortable: true
         },
+        {
+          name: 'clients',
+          required: true,
+          label: 'CLIENTES',
+          align: 'center',
+          field: 'clients',
+          headerClasses: 'bg-primary text-white',
+          sortable: true
+        },
         { name: 'actions', label: 'ACCIONES', field: '', align: 'center', headerClasses: 'bg-primary text-white' }
       ],
       act: 'post',
