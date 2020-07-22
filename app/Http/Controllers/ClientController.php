@@ -44,7 +44,7 @@ class ClientController extends Controller
     {
         $found = Client::query()->where('names', $request->input('names'))->first();
         if ($found === null) {
-             Client::query()->create($request->all());;
+             Client::query()->create($request->except('services'));;
             return response()->json('Datos guardados correctamente.');
         } else {
             return response()->json('Ya existe un cliente con ese nombre!', 500);
@@ -54,7 +54,7 @@ class ClientController extends Controller
 
     public function update(Request $request)
     {
-        Client::query()->where('id', $request->id)->update($request->all());
+        Client::query()->where('id', $request->id)->update($request->except('services'));
         return response()->json('Datos actualizados correctamente.');
     }
 

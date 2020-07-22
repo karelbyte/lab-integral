@@ -45,7 +45,7 @@ class DoctorsController extends Controller
     {
         $found = Doctor::query()->where('names', $request->input('names'))->first();
         if ($found === null) {
-            Doctor::query()->create($request->all());;
+            Doctor::query()->create($request->except('clients'));;
             return response()->json('Datos guardados correctamente.');
         } else {
             return response()->json('Ya existe un doctor con ese nombre!', 500);
@@ -55,7 +55,7 @@ class DoctorsController extends Controller
 
     public function update(Request $request)
     {
-        Doctor::query()->where('id', $request->id)->update($request->all());
+        Doctor::query()->where('id', $request->id)->update($request->except('clients'));
         return response()->json('Datos actualizados correctamente.');
     }
 

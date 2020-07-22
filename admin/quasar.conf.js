@@ -10,7 +10,8 @@ module.exports = function (ctx) {
       'i18n',
       'axios',
       'noty',
-      'directives'
+      'directives',
+      'froala'
       // 'editor'
     ],
 

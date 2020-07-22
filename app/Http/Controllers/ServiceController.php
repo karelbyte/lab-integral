@@ -40,12 +40,11 @@ class ServiceController extends Controller
         $age = $this->getAge($client->birthday);
         $content = '';
         if ($cont->head !== 1) {
-
-            $header = "<br><br><br><br><span>MEDICO: <b>$doctor</b></span><br>"
+            $header = "<br><br><br><span>MEDICO: <b>$doctor</b></span><br>"
                 . "<span>FECHA: <b>$moment</b></b></span><br>"
-                . "<span>PACIENTE: <b>$name</b></span><br>"
-                . "<span>CLAVE: <b>$code</b></span><br>"
-                . "<span>EDAD: <b>$age</b></span><br>";
+                . "<span>PACIENTE: <b>$name</b>&nbsp;&nbsp;</span>"
+                . "<span>EDAD: <b>$age</b>&nbsp;&nbsp;</span>"
+                 . "<span>CLAVE: <b>$code</b>&nbsp;&nbsp;</span>";
             $content = $header . $cont->content;
         } else {
             $content = $cont->content;

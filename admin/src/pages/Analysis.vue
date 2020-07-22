@@ -74,7 +74,8 @@
             <q-input v-only-numbers dense outlined v-model.number="item.price" label="Precio" class="q-mb-sm"/>
           </div>
           <div :hidden="templateOff" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
-          <tinymce  id="d1" v-model="item.content" :toolbar1="tool" :other_options="tinyOptions"/>
+         <!--  <tinymce  id="d1" v-model="item.content" :toolbar1="tool" :other_options="tinyOptions"/> -->
+            <froala id="edit" :tag="'textarea'"  :config="config" v-model="item.content"></froala>
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
            <q-btn v-if="item.affects" label="Añadir Producto" @click="newItemDetail"/>
@@ -197,16 +198,19 @@
 </template>
 
 <script>
-import tinymce from 'vue-tinymce-editor'
+// import tinymce from 'vue-tinymce-editor'
 import { ApiUrl, generateId, onview } from '../boot/tools'
 import DeleteItem from '../components/DeleteItem'
 export default {
   name: 'reception',
   components: {
-    DeleteItem, tinymce
+    DeleteItem // tinymce
   },
   data () {
     return {
+      config: {
+        height: 400
+      },
       templateOff: false,
       tinyOptions: {
         height: '40vh',

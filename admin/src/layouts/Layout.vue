@@ -43,7 +43,7 @@
         <q-item v-ripple clickable :active="isActiveItem(11)" @click="goToUrl('doctores', 11)"
                 active-class="text-orange-5">
           <q-item-section avatar>
-            <q-icon name="fa fa-users" />
+            <q-icon name="fa fa-user-md" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Doctores</q-item-label>
@@ -148,13 +148,13 @@
           label="Configuración"
         >
           <q-list dark class="q-pl-md">
-            <q-item v-ripple clickable :active="isActiveItem(10)" @click="goToUrl('', 10)"
+            <q-item v-ripple clickable :active="isActiveItem(10)" @click="goToUrl('test', 10)"
                     active-class="text-orange-5">
               <q-item-section avatar>
                 <q-icon name="fa fa-flask" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>Analisis</q-item-label>
+                <q-item-label>Test</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
