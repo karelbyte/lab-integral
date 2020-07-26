@@ -59,6 +59,7 @@ Route::prefix('analysis')->group(function () {
     Route::post('update', 'AnalysisController@update');
     Route::post('eraser', 'AnalysisController@destroy');
     Route::get('pdf/{id}', 'AnalysisController@pdf');
+    Route::get('clone/{id}', 'AnalysisController@clones');
 });
 
 

@@ -48,7 +48,8 @@
                   <q-td :props="props">
                     <q-btn  dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItem(props.row)"/>
                     <q-btn  dense color="negative"  class="q-mr-xs" icon="fa fa-eraser" @click="eraserShow(props.row)"/>
-                   <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row.id)"/>
+                    <q-btn  dense color="primary"  class="q-mr-xs" icon="fa fa-clone" @click="clones(props.row)"/>
+                    <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row.id)"/>
                   </q-td>
                 </template>
               </q-table>
@@ -373,8 +374,12 @@ export default {
     )
   },
   methods: {
-    makeurl (id) {
-      return '/pdf/' + id
+    clones (item) {
+      this.$axios.get(ApiUrl + '/analysis/clone/' + item.id).then(() => {
+        this.getList({
+          pagination: this.pagination
+        })
+      })
     },
     analisisShow (id) {
       window.open('/pdf/' + id, '_blank')

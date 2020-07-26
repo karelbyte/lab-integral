@@ -78,6 +78,15 @@ class AnalysisController extends Controller
         return $pdf->inline();
     }
 
+    public function clones ($id) {
+      $toClone = Analyses::find($id);
+      $clone = $toClone->replicate();
+      $clone->description = $toClone->description . '-Copia-';
+      $clone->push();
+      return http_response_code(200);
+    }
+
+
     public function destroy(Request $request)
     {
 
