@@ -48,7 +48,8 @@
                   <q-td :props="props">
                     <q-btn  dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItem(props.row)"/>
                     <q-btn  dense color="negative"  class="q-mr-xs" icon="fa fa-eraser" @click="eraserShow(props.row)"/>
-                    <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row)"/>
+                    <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row.id)"/>
+                    <a  class="text-black"  :href="makeurl(props.row.id)" target="_blank"> <i class="fa fa-file-pdf"></i> </a>
                   </q-td>
                 </template>
               </q-table>
@@ -74,8 +75,7 @@
             <q-input v-only-numbers dense outlined v-model.number="item.price" label="Precio" class="q-mb-sm"/>
           </div>
           <div :hidden="templateOff" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
-         <!--  <tinymce  id="d1" v-model="item.content" :toolbar1="tool" :other_options="tinyOptions"/> -->
-            <froala id="edit" :tag="'textarea'"  :config="config" v-model="item.content"></froala>
+           <tinymce  id="d1" v-model="item.content" :toolbar1="tool" :other_options="tinyOptions"/>
           </div>
           <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
            <q-btn v-if="item.affects" label="Añadir Producto" @click="newItemDetail"/>
@@ -198,18 +198,19 @@
 </template>
 
 <script>
-// import tinymce from 'vue-tinymce-editor'
+import tinymce from 'vue-tinymce-editor'
 import { ApiUrl, generateId, onview } from '../boot/tools'
 import DeleteItem from '../components/DeleteItem'
 export default {
   name: 'reception',
   components: {
-    DeleteItem // tinymce
+    DeleteItem, tinymce
   },
   data () {
     return {
       config: {
-        height: 400
+        height: 400,
+        language: 'es'
       },
       templateOff: false,
       tinyOptions: {
@@ -373,6 +374,12 @@ export default {
     )
   },
   methods: {
+    makeurl (id) {
+      return '/pdf/' + id
+    },
+    analisisShow (id) {
+      window.location.href = 'http://lab.jet/analysis/pdf/' + id
+    },
     editItemDetail (it) {
       this.$axios.get(ApiUrl + '/receptions/resources').then(res => {
         this.products = res.data.products
@@ -511,8 +518,8 @@ export default {
     IsSaveWard () {
       let description = this.item.description !== ''
       let price = this.item.price > 0
-      let content = this.item.content !== ''
-      return price && description && content
+      // let content = this.item.content !== ''
+      return price && description
     }
   }
 }

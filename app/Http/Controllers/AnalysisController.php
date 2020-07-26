@@ -71,6 +71,13 @@ class AnalysisController extends Controller
         }
     }
 
+    public function pdf ($id) {
+        $contents = Analyses::query()->find($id);
+        $pdf = \App::make('snappy.pdf.wrapper');
+        $pdf->loadHTML($contents->content);
+        return $pdf->inline();
+    }
+
     public function destroy(Request $request)
     {
 

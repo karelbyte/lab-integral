@@ -10,6 +10,9 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::prefix('analysis')->group(function () {
+    Route::get('pdf/{id}', 'AnalysisController@pdf');
+});
 
 Route::get('{any}', function () {
     return view('app');

@@ -1,4 +1,4 @@
-// import tinymce from 'vue-tinymce-editor'
+import tinymce from 'vue-tinymce-editor'
 import VueBarcode from '@chenfengyuan/vue-barcode'
 import { ApiUrl, onview, generateId, dateToUS } from '../../boot/tools'
 import DeleteItem from '../../components/DeleteItem'
@@ -8,12 +8,13 @@ import FormChangeServiceStatus from '../../components/FormChangeServiceStatus'
 export default {
   name: 'services',
   components: {
-    DeleteItem, 'barcode': VueBarcode, ClientAdd, DoctorAdd, FormChangeServiceStatus // tinymce,
+    DeleteItem, 'barcode': VueBarcode, ClientAdd, DoctorAdd, FormChangeServiceStatus, tinymce
   },
   data () {
     return {
       config: {
-        height: 300
+        height: 300,
+        language: 'es'
       },
       showFormClient: false,
       showFormDoctor: false,

@@ -346,8 +346,7 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-         <!-- <tinymce  id="d1" v-model="dataResult.content" :toolbar1="tool" :other_options="tinyOptions"/> -->
-          <froala id="edit" :tag="'textarea'" :config="config"  v-model="dataResult.content"></froala>
+          <tinymce  id="d1" v-model="dataResult.content" :toolbar1="tool" :other_options="tinyOptions"/>
         </q-card-section>
         <q-separator/>
         <q-card-actions align="right">
