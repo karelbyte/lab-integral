@@ -48,8 +48,7 @@
                   <q-td :props="props">
                     <q-btn  dense color="secondary"  class="q-mr-xs" icon="fa fa-edit" @click="editItem(props.row)"/>
                     <q-btn  dense color="negative"  class="q-mr-xs" icon="fa fa-eraser" @click="eraserShow(props.row)"/>
-                    <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row.id)"/>
-                    <a  class="text-black"  :href="makeurl(props.row.id)" target="_blank"> <i class="fa fa-file-pdf"></i> </a>
+                   <q-btn  dense color="info" class="text-black" icon="fa fa-file-pdf" @click="analisisShow(props.row.id)"/>
                   </q-td>
                 </template>
               </q-table>
@@ -378,7 +377,7 @@ export default {
       return '/pdf/' + id
     },
     analisisShow (id) {
-      window.location.href = 'http://lab.jet/analysis/pdf/' + id
+      window.open('/pdf/' + id, '_blank')
     },
     editItemDetail (it) {
       this.$axios.get(ApiUrl + '/receptions/resources').then(res => {
