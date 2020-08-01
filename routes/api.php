@@ -32,8 +32,17 @@ Route::prefix('services')->group(function () {
     Route::get('get-content/{id}', 'ServiceController@getcontent');
     Route::post('store-content', 'ServiceController@storeContent');
     Route::post('set-status', 'ServiceController@setStatus');
+    Route::post('get-next', 'getNextNumberClientController@setStatus');
 });
 
+
+Route::prefix('locations')->group(function () {
+    Route::post('list', 'LocationController@list');
+    Route::get('resources', 'LocationController@resources');
+    Route::post('post', 'LocationController@store');
+    Route::post('update', 'LocationController@update');
+    Route::post('eraser', 'LocationController@destroy');
+});
 
 Route::prefix('clients')->group(function () {
     Route::post('list', 'ClientController@list');

@@ -6,8 +6,10 @@ use App\Http\Resources\ServicesResource;
 use App\Models\Analyses;
 use App\Models\Client;
 use App\Models\Doctor;
+use App\Models\Location;
 use App\Models\Service;
 use App\Models\ServiceDetails;
+use App\Models\Surrogate;
 use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -18,9 +20,21 @@ class ServiceController extends Controller
         $data = [
             'clients' => Client::query()->select('id', 'names')->get(),
             'analysis' => Analyses::query()->select('id', 'code', 'description', 'content', 'price')->get(),
-            'doctors' => Doctor::query()->select('id', 'names')->get()
+            'doctors' => Doctor::query()->select('id', 'names')->get(),
+            'locations' => Location::query()->select('id', 'names', 'symbol')->get(),
+            'next' => $this->getNextNumberClient()
         ];
         return response()->json($data);
+    }
+
+    function getNextNumberClient () {
+        $moment = Carbon::now()->startOfMonth();
+        $surrogate = Surrogate::query()->firstOrCreate([
+            ['moment', '>=', $moment],
+            ['moment', '<=', $moment]
+        ], ['moment' => $moment]);
+        $result = $surrogate->next <10 ? '0' .$surrogate->next : $surrogate->next;
+        return $result;
     }
 
     function getAge ($age) {
@@ -29,6 +43,7 @@ class ServiceController extends Controller
         $annos = $hoy->diffInYears($cumpleanos);
         return $annos;
     }
+
     public function getContent($id) {
         $cont = ServiceDetails::query()->find($id);
         $service = Service::query()->find($cont->service_id);
@@ -116,6 +131,13 @@ class ServiceController extends Controller
         }
         $service->price =  $priceTotal - $request->input('discount');
         $service->save();
+        $moment = Carbon::now()->startOfMonth();
+        $surrogate = Surrogate::query()->firstWhere([
+            ['moment', '>=', $moment],
+            ['moment', '<=', $moment]
+        ]);
+        $surrogate->next++;
+        $surrogate->save();
         return response()->json('Datos guardados correctamente.');
     }
 

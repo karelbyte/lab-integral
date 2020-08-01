@@ -31,6 +31,7 @@ class ServicesResource extends JsonResource
             'client' => $this->client->names,
             'doctor' => $this->doctor->names,
             'status_id' => $this->status_id,
+            'location_id' => $this->location_id,
             'status' => $this->status->description,
             'barcode' => $this->barcode,
             'barcode_quantity' => $this->barcode_quantity,

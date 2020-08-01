@@ -4,11 +4,12 @@ import { ApiUrl, onview, generateId, dateToUS } from '../../boot/tools'
 import DeleteItem from '../../components/DeleteItem'
 import ClientAdd from '../../components/ClientAdd'
 import DoctorAdd from '../../components/DoctorAdd'
+import LocationAdd from '../../components/LocationAdd'
 import FormChangeServiceStatus from '../../components/FormChangeServiceStatus'
 export default {
   name: 'services',
   components: {
-    DeleteItem, 'barcode': VueBarcode, ClientAdd, DoctorAdd, FormChangeServiceStatus, tinymce
+    DeleteItem, 'barcode': VueBarcode, ClientAdd, DoctorAdd, LocationAdd, FormChangeServiceStatus, tinymce
   },
   data () {
     return {
@@ -16,6 +17,7 @@ export default {
         height: 300,
         language: 'es'
       },
+      showFormLocation: false,
       showFormClient: false,
       showFormDoctor: false,
       statusEditResult: 1,
@@ -193,6 +195,7 @@ export default {
         client_id: '',
         status_id: 1,
         doctor_id: '',
+        location_id: '',
         price: 0,
         barcode: '',
         barcode_quantity: 1,
@@ -205,6 +208,7 @@ export default {
         moment: '',
         client_id: '',
         doctor_id: '',
+        location_id: '',
         price: 0,
         barcode: '',
         barcode_quantity: 1,
@@ -215,6 +219,8 @@ export default {
       },
       clients: [],
       doctors: [],
+      locations: [],
+      location: null,
       clientsSearch: [],
       doctorsSearch: [],
       analysis: [],
@@ -263,7 +269,12 @@ export default {
         },
         { name: 'actions', label: 'ACCIONES', field: '', align: 'center', headerClasses: 'bg-primary text-white' }
       ],
-      showFormChangeStatusService: false
+      showFormChangeStatusService: false,
+      locationsSearch: [],
+      monthNames: ['E', 'F', 'MA', 'A', 'MY', 'J',
+        'JL', 'AG', 'S', 'O', 'N', 'D'
+      ],
+      next: 0
     }
   },
   watch: {
@@ -276,7 +287,9 @@ export default {
       this.getList({
         pagination: this.pagination
       })
-    }
+    },
+    'client': 'getCodeBar',
+    'location': 'getCodeBar'
   },
   computed: {
     getSubTotal: function () {
@@ -310,6 +323,13 @@ export default {
     )
   },
   methods: {
+    getCodeBar () {
+      if (this.location !== null && this.client !== null) {
+        this.item.barcode = this.location.symbol + this.monthNames[new Date().getMonth()] + this.next + this.client.names.split(' ').reduce((a, b) => {
+          return a + b.substr(0, 1)
+        }, '')
+      }
+    },
     formChangeStatusService (item) {
       if (parseFloat(item.balance) > 0) {
         this.item = item
@@ -411,6 +431,18 @@ export default {
         this.doctorsSearch = this.doctors.filter(v => v.names.toLowerCase().indexOf(needle) > -1)
       })
     },
+    filterFnLocations (val, update) {
+      if (val === '') {
+        update(() => {
+          this.locationsSearch = this.locations
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.locationsSearch = this.locations.filter(v => v.names.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     getList (props) {
       let toServer = {
         pagination: props.pagination,
@@ -460,12 +492,16 @@ export default {
         this.clients = res.data.clients
         this.analysis = res.data.analysis
         this.doctors = res.data.doctors
+        this.locations = res.data.locations
+        this.next = res.data.next
         this.client = null
         this.doctor = null
+        this.location = null
         this.titleForm = 'Añadir servicio a cliente.'
         this.item = { ...this.itemClear }
         this.item.analysis = []
         this.item.moment = dateToUS(new Date())
+        this.item.barcode = this.monthNames[new Date().getMonth()]
         this.isItemEdit = false
         onview('news', this.views)
       })
@@ -488,23 +524,35 @@ export default {
     closeFormDoctor () {
       this.showFormDoctor = false
     },
+    getLocationList () {
+      this.$axios.get(ApiUrl + '/locations/resources').then(res => {
+        this.locations = res.data
+        this.showFormLocation = false
+      })
+    },
+    closeFormLocation () {
+      this.showFormLocation = false
+    },
     editItem (itm) {
       this.$axios.get(ApiUrl + '/services/resources').then(res => {
         this.clients = res.data.clients
         this.analysis = res.data.analysis
         this.doctors = res.data.doctors
+        this.locations = res.data.locations
         this.titleForm = 'Editar servicio a cliente.'
         this.isItemEdit = true
         this.act = 'update'
         this.item = { ...itm }
         this.client = this.clients.find(it => it.id === itm.client_id)
         this.doctor = this.doctors.find(doc => doc.id === itm.doctor_id)
+        this.location = this.locations.find(loc => loc.id === itm.location_id)
         onview('news', this.views)
       })
     },
     saveItem () {
       this.item.client_id = this.client.id
       this.item.doctor_id = this.doctor.id
+      this.item.location_id = this.location.id
       this.$axios({
         method: 'post',
         url: ApiUrl + '/services/' + this.act,

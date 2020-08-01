@@ -221,21 +221,55 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 q-pa-sm">
+          <div class="col-lg-2 col-md-1 col-sm-1 col-xs-1 q-pa-sm">
             <q-btn label="Analisis" style="background-color: brown; color:wheat" @click="newItemDetail"/>
           </div>
-          <div class="col-lg-2 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
+            <q-select
+              v-model="location"
+              use-input
+              input-debounce="0"
+              dense outlined
+              :options="locationsSearch"
+              option-label="names"
+              option-value="id"
+              map-options
+              @filter="filterFnLocations"
+              class="q-mb-sm"
+              label="Procedencia"
+            >
+              <template v-slot:option="scope">
+                <q-item
+                  v-bind="scope.itemProps"
+                  v-on="scope.itemEvents"
+                >
+                  <q-item-section>
+                    <q-item-label caption>{{ scope.opt.names  + ' (' + scope.opt.symbol + ')'  }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    Sin resultados
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-btn @click="showFormLocation = true">+</q-btn>
+          </div>
+          <div class="col-lg-1 col-md-3 col-sm-12 col-xs-12 q-pa-sm">
             <q-input dense outlined v-only-numbers v-model.number="item.discount" label="Descuento" class="q-mb-sm"/>
           </div>
-          <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+          <div class="col-lg-1 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
             <q-input dense outlined v-only-numbers v-model.number="item.advance" label="Pagado" class="q-mb-sm"/>
           </div>
           <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
             <q-input dense outlined v-model="item.barcode" label="Codigo de barra" class="q-mb-md"/>
           </div>
-          <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
+         <!-- <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 q-pa-sm">
             <q-input dense outlined v-model.number="item.barcode_quantity" label="Cantidad de etiquetas" class="q-mb-md"/>
-          </div>
+          </div> -->
         </div>
         <q-card-section class="section-fix">
           <q-table
@@ -378,6 +412,8 @@
     <ClientAdd :showFormClient="showFormClient" act="post" @update="getClientList" @close="closeFormClient"></ClientAdd>
     <!-- AÑADIR Doctor -->
     <DoctorAdd :showFormDoctor="showFormDoctor" act="post" @update="getDoctorList" @close="closeFormDoctor"></DoctorAdd>
+    <!-- AÑADIR LOCACION -->
+    <LocationAdd :showFormLocation="showFormLocation" act="post" @update="getLocationList" @close="closeFormLocation"></LocationAdd>
     <!--CAMBIAR ESTADO SERVICIO -->
     <form-change-service-status :show="showFormChangeStatusService" :item="item" @update="getListUpdate" @close="showFormChangeStatusService=false"></form-change-service-status>
     <delete-item

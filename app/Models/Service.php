@@ -17,7 +17,7 @@ class Service extends Model
     /**
      * @var array
      */
-    protected $fillable = ['client_id', 'moment', 'doctor_id',  'price', 'note',
+    protected $fillable = ['client_id', 'moment', 'doctor_id',  'location_id', 'price', 'note',
         'barcode', 'barcode_quantity',
         'discount', 'advance', 'status_id',  'created_at', 'updated_at'];
 
@@ -40,6 +40,11 @@ class Service extends Model
     public function analysis()
     {
         return $this->hasMany(ServiceDetails::class);
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
     }
 
     public function status()

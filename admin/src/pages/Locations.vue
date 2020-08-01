@@ -2,12 +2,12 @@
   <q-page class=" q-pa-md">
     <div class="gt-xs row flex">
       <q-breadcrumbs class="text-grey">
-        <q-breadcrumbs-el label="Clientes" />
+        <q-breadcrumbs-el label="Fuentes" />
         <q-breadcrumbs-el label="Listado" />
       </q-breadcrumbs>
     </div>
     <div class="row">
-      <div class="col-lg-8 col-xs-12"><q-btn color="primary" label="Nuevo" @click="newItem"/></div>
+      <div class="col-lg-8 col-xs-12"><q-btn color="primary" label="Nueva" @click="newItem"/></div>
       <div class="col-lg-4 col-xs-12 flex flex-inline">
         <q-input dense autofocus v-model="filter.val" label="filtro..." style="width: 49%"/>
         <q-select dense v-model="filter.field" :options="filerOptions" label="filtro por..."
@@ -61,8 +61,8 @@
     <delete-item
       :showFormDelete="showFormDelete"
       :item="item"
-      title="Eliminar proveedor"
-      url="/clients/eraser"
+      title="Eliminar fuente"
+      url="/locations/eraser"
       targets="names"
       @updateList="updateOfEraser"
     />
@@ -74,12 +74,11 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-          <q-input ref="name" dense outlined autofocus v-model="item.names" label="Nombres" class="q-mb-xs"/>
-          <span>Fecha de nacimiento</span>
-          <q-input dense outlined type="date" v-model="item.birthday" class="q-mb-sm"/>
+          <q-input ref="name" dense outlined autofocus v-model="item.names" label="Lugar" class="q-mb-xs"/>
+          <q-input dense outlined type="text" v-model="item.symbol" label="Nomenclatura" class="q-mb-sm"/>
+          <q-input dense outlined type="text" v-model="item.address" label="Direccion" class="q-mb-sm"/>
           <q-input dense outlined v-model="item.email" label="Correo" class="q-mb-xs"/>
           <q-input v-only-int-numbers dense outlined v-model="item.telf" label="Telefono" class="q-mb-xs"/>
-          <q-input dense outlined type="textarea" v-model="item.note" label="Observaciones" />
         </q-card-section>
         <q-separator/>
         <q-card-actions align="right">
@@ -95,7 +94,7 @@
 import { ApiUrl } from '../boot/tools'
 import DeleteItem from '../components/DeleteItem'
 export default {
-  name: 'clients',
+  name: 'locations',
   components: {
     DeleteItem
   },
@@ -113,13 +112,22 @@ export default {
         {
           name: 'names',
           required: true,
-          label: 'NOMBRES',
+          label: 'LUGAR',
           align: 'left',
           field: 'names',
           headerClasses: 'bg-primary text-white',
           sortable: true
         },
-        { name: 'age', label: 'EDAD', field: '', align: 'center', headerClasses: 'bg-primary text-white' },
+        { name: 'symbol', label: 'NOMECLADOR', field: 'symbol', align: 'center', headerClasses: 'bg-primary text-white' },
+        {
+          name: 'address',
+          required: true,
+          label: 'DIRECCION',
+          align: 'left',
+          field: 'address',
+          headerClasses: 'bg-primary text-white',
+          sortable: true
+        },
         {
           name: 'email',
           required: true,
@@ -135,15 +143,6 @@ export default {
           label: 'TELEFONO',
           align: 'left',
           field: 'telf',
-          headerClasses: 'bg-primary text-white',
-          sortable: true
-        },
-        {
-          name: 'services',
-          required: true,
-          label: 'SERVICIOS',
-          align: 'center',
-          field: 'services',
           headerClasses: 'bg-primary text-white',
           sortable: true
         },
@@ -178,16 +177,16 @@ export default {
       item: {
         id: 0,
         names: '',
-        birthday: '',
-        note: '',
+        address: '',
+        symbol: '',
         email: '',
         telf: ''
       },
       itemClear: {
         id: 0,
         names: '',
-        birthday: '',
-        note: '',
+        address: '',
+        symbol: '',
         email: '',
         telf: ''
       }
@@ -207,7 +206,7 @@ export default {
   },
   computed: {
     validateSave () {
-      return this.item.names !== '' && this.item.birthday
+      return this.item.names !== '' && this.item.symbol !== ''
     }
   },
   mounted () {
@@ -218,16 +217,6 @@ export default {
     )
   },
   methods: {
-    getAge (age) {
-      let hoy = new Date()
-      let cumpleanos = new Date(age)
-      var edad = hoy.getFullYear() - cumpleanos.getFullYear()
-      var m = hoy.getMonth() - cumpleanos.getMonth()
-      if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
-        edad--
-      }
-      return edad
-    },
     getList (props) {
       let toServer = {
         pagination: props.pagination,
@@ -235,7 +224,7 @@ export default {
       }
       this.dataLabel = 'Cargando datos...'
       this.loading = true
-      this.$axios.post(ApiUrl + '/clients/list', toServer).then(res => {
+      this.$axios.post(ApiUrl + '/locations/list', toServer).then(res => {
         this.datas = res.data.list
         this.dataLabel = this.datas.length >= 0 ? '' : 'No hay datos que mostrar...'
         this.pagination = props.pagination
@@ -245,20 +234,20 @@ export default {
     },
     newItem () {
       this.act = 'post'
-      this.titleForm = 'Añadir cliente.'
+      this.titleForm = 'Añadir fuente'
       this.item = { ...this.itemClear }
       this.showForm = true
     },
     editItem (itm) {
       this.act = 'update'
-      this.titleForm = 'Editar datos del cliente.'
+      this.titleForm = 'Editar datos de la fuente.'
       this.item = { ...itm }
       this.showForm = true
     },
     saveItem () {
       this.$axios({
         method: 'post',
-        url: ApiUrl + '/clients/' + this.act,
+        url: ApiUrl + '/locations/' + this.act,
         data: this.item
       }).then(res => {
         this.$noty.positive(res.data)

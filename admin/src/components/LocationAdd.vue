@@ -2,16 +2,15 @@
   <q-dialog v-model="show" persistent transition-show="scale" transition-hide="scale">
     <q-card  style="width: 700px; max-width: 80vw;">
       <q-card-section>
-        Añadir cliente
+        Añadir Fuente
       </q-card-section>
       <q-separator/>
       <q-card-section>
-        <q-input ref="name" dense outlined autofocus v-model="item.names" label="Nombres" class="q-mb-xs"/>
-        <span>Fecha de nacimiento</span>
-        <q-input dense outlined type="date" v-model="item.birthday" class="q-mb-sm"/>
+        <q-input ref="name" dense outlined autofocus v-model="item.names" label="Lugar" class="q-mb-xs"/>
+        <q-input dense outlined type="text" v-model="item.symbol" label="Nomenclatura" class="q-mb-sm"/>
+        <q-input dense outlined type="text" v-model="item.address" label="Direccion" class="q-mb-sm"/>
         <q-input dense outlined v-model="item.email" label="Correo" class="q-mb-xs"/>
         <q-input v-only-int-numbers dense outlined v-model="item.telf" label="Telefono" class="q-mb-xs"/>
-        <q-input dense outlined type="textarea" v-model="item.note" label="Observaciones" />
       </q-card-section>
       <q-separator/>
       <q-card-actions align="right">
@@ -26,14 +25,14 @@
 import { ApiUrl } from '../boot/tools'
 
 export default {
-  name: 'ClientAdd',
+  name: 'LocationAdd',
   props: [
-    'showFormClient',
+    'showFormLocation',
     'act'
   ],
   computed: {
     validateSave () {
-      return this.item.names !== '' && this.item.birthday
+      return this.item.names !== '' && this.item.symbol !== ''
     }
   },
   data () {
@@ -42,24 +41,24 @@ export default {
       item: {
         id: 0,
         names: '',
-        birthday: '',
-        note: '',
+        address: '',
+        symbol: '',
         email: '',
         telf: ''
       },
       itemClear: {
         id: 0,
         names: '',
-        birthday: '',
-        note: '',
+        address: '',
+        symbol: '',
         email: '',
         telf: ''
       }
     }
   },
   watch: {
-    'showFormClient': function () {
-      this.show = this.showFormClient
+    'showFormLocation': function () {
+      this.show = this.showFormLocation
     }
   },
   methods: {
@@ -70,7 +69,7 @@ export default {
     saveItem () {
       this.$axios({
         method: 'post',
-        url: ApiUrl + '/clients/' + this.act,
+        url: ApiUrl + '/locations/' + this.act,
         data: this.item
       }).then(() => {
         this.$emit('update')

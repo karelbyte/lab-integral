@@ -31,24 +31,6 @@
       elevated
     >
       <q-list dark>
-        <q-item v-ripple clickable :active="isActiveItem(2)" @click="goToUrl('clientes', 2)"
-                active-class="text-orange-5">
-          <q-item-section avatar>
-            <q-icon name="fa fa-users" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Clientes</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-ripple clickable :active="isActiveItem(11)" @click="goToUrl('doctores', 11)"
-                active-class="text-orange-5">
-          <q-item-section avatar>
-            <q-icon name="fa fa-user-md" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Doctores</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-separator></q-separator>
         <q-item v-ripple clickable :active="isActiveItem(1)" @click="goToUrl('services', 1)"
                 active-class="text-orange-5"
@@ -74,6 +56,33 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>Analisis</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-ripple clickable :active="isActiveItem(2)" @click="goToUrl('clientes', 2)"
+                    active-class="text-orange-5">
+              <q-item-section avatar>
+                <q-icon name="fa fa-users" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Clientes</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-ripple clickable :active="isActiveItem(11)" @click="goToUrl('doctores', 11)"
+                    active-class="text-orange-5">
+              <q-item-section avatar>
+                <q-icon name="fa fa-user-md" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Doctores</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-ripple clickable :active="isActiveItem(12)" @click="goToUrl('procedencias', 12)"
+                    active-class="text-orange-5">
+              <q-item-section avatar>
+                <q-icon name="fa fa-map-marked-alt" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Fuentes</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>

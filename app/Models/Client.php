@@ -25,15 +25,18 @@ class Client extends Model
     /**
      * @var array
      */
-    protected $fillable = ['names', 'address', 'birthday', 'email', 'telf', 'created_at', 'updated_at'];
+    protected $fillable = ['names', 'note', 'birthday', 'email', 'telf', 'created_at', 'updated_at'];
 
     protected $appends = [
         'services'
     ];
+    public function services() {
+        return $this->hasMany(Service::class);
+    }
 
     public function getServicesAttribute()
     {
-        $cant = $this->hasMany(Service::class)->count();
+        $cant = $this->services()->count();
         return $cant > 0 ? $cant : '';
     }
 
