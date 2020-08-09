@@ -382,7 +382,7 @@ export default {
       })
     },
     analisisShow (id) {
-      window.open('/pdf/' + id, '_blank')
+      window.open('http://lab.test/analysis/pdf/' + id, '_blank')
     },
     editItemDetail (it) {
       this.$axios.get(ApiUrl + '/receptions/resources').then(res => {

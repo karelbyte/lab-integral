@@ -80,6 +80,12 @@
                             <q-item-section>Eliminar</q-item-section>
                           </q-item>
                           <q-separator />
+                          <q-item  v-if="props.row.status_id === 1" clickable v-close-popup @click="printNote(props.row)">
+                            <q-item-section avatar>
+                              <q-icon color="brown" name="fa fa-file-invoice-dollar" />
+                            </q-item-section>
+                            <q-item-section>Nota de venta</q-item-section>
+                          </q-item>
                           <q-item clickable v-close-popup @click="printQr(props.row)">
                             <q-item-section avatar>
                               <q-icon color="blue" name="fa fa-barcode" />
@@ -424,6 +430,20 @@
       targets="client,analysis_description"
       @updateList="updateOfEraser"
     />
+    <q-dialog v-model="showPrintNote" persistent transition-show="scale" transition-hide="scale">
+      <q-card  style="width:500px; max-width: 80vw;">
+        <q-card-section>
+          Imprimir nota
+        </q-card-section>
+        <q-separator/>
+        <q-card-section v-html="iframe">
+        </q-card-section>
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn dense flat label="Cerrar"  @click="showPrintNote = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 

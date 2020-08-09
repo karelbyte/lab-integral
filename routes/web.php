@@ -12,6 +12,7 @@
 */
 Route::prefix('analysis')->group(function () {
     Route::get('pdf/{id}', 'AnalysisController@pdf');
+    Route::get('sales-note/{id}', 'ServiceController@salesNote');
 });
 
 Route::get('{any}', function () {

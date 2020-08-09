@@ -1,4 +1,4 @@
-export const ApiUrl = 'http://lab.jet/api'
+export const ApiUrl = 'http://lab.test/api'
 // export const ApiUrl = '/api'
 
 export const onview = function (pro, v) {

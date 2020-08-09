@@ -18,8 +18,8 @@ class ServiceDetailsResource extends JsonResource
             'id' => $this->id,
             'analysis_id' => $this->analysis_id,
             'description' => $this->description,
-            'code' => $this->analysis->code,
-            'price' => $this->analysis->price,
+            'code' => $this->code,
+            'price' => $this->price,
             'barcode'=> $this->barcode,
             'barcode_quantity' => $this->barcode_quantity
         ];

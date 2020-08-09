@@ -18,6 +18,7 @@ class CreateServicesDetailsTable extends Migration
             $table->unsignedBigInteger('service_id');
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->unsignedBigInteger('analysis_id');
+            $table->decimal('price', 10, 2);
             $table->foreign('analysis_id')->references('id')->on('analyses');
             $table->longText('content');
             $table->string('description');

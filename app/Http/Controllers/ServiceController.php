@@ -125,6 +125,7 @@ class ServiceController extends Controller
             $service->analysis()->create([
                 'analysis_id' => $det['analysis_id'],
                 'content' => $content->content,
+                'price' => $det['price'],
                 'description' => $det['description'],
             ]);
             $priceTotal +=  $det['price'];
@@ -168,5 +169,15 @@ class ServiceController extends Controller
     {
         Service::query()->where('id', $request->id)->delete();
         return response()->json('Dato eliminado correctamente.');
+    }
+
+    public function salesNote($id) {
+        $pdf = \App::make('snappy.pdf.wrapper');
+        $data = Service::query()->with(['analysis' => function($q) {
+            $q->with('analysis');
+        }])->find($id);
+        $view = view('ticket', compact('data'))->render();
+        $pdf->loadHTML($view);
+        return $view;
     }
 }

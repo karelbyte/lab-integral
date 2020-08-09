@@ -274,7 +274,9 @@ export default {
       monthNames: ['E', 'F', 'MA', 'A', 'MY', 'J',
         'JL', 'AG', 'S', 'O', 'N', 'D'
       ],
-      next: 0
+      next: 0,
+      showPrintNote: false,
+      iframe: ''
     }
   },
   watch: {
@@ -361,6 +363,10 @@ export default {
         this.showEditResult = false
         this.$noty.positive('Se guardo la información!')
       })
+    },
+    printNote (item) {
+      this.showPrintNote = true
+      this.iframe = '<iframe src="http://lab.test/analysis/sales-note/' + item.id + '" style="width: 100%" frameborder="0"></iframe>'
     },
     printQr (item) {
       let name = item.client.replace(/ /g, '-').substring(0, 22)
